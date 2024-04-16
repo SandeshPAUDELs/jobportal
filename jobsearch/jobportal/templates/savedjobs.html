@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Saved Jobs{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  
+  <h4>Saved Jobs</h4>
+  {% for savedjob in saveddata %}
+  <div class="card">
+    <div class="card-content">
+      <h2 class="card-title">{{ savedjob.job.title }}</h2>
+      <p class="card-description">{{ savedjob.job.description }}</p>
+      
+    </div>
+    <div class="card-image-container">
+      {% if savedjob.job.photo %}
+      <img class="card-image" src="{{ savedjob.job.photo.url }}" alt="{{ savedjob.job.title }}">
+      {% else %}
+      <p>No Photo Available</p>
+      {% endif %}
+    </div>
+    <div class="button-container">
+        <form method="post" action="{% url 'jobPortal_home_jobs' savedjob.job.id %}">
+          {% csrf_token %}
+          <button type="submit" class="apply-btn">Apply</button>
+        </form>
+        
+        
+        <form method="post" action="{% url 'delete_saved_jobs' savedjob.id %}">
+          
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">Delete</button>
+          </form>
+        
+        
+      </div>
+  </div>
+  {% endfor %}
+  
+</div>
+{% endblock %}

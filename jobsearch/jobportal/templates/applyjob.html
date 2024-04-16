@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Applying Job{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container ">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h5>Job Details</h5>
+
+            {% for job in data %}
+                <h3>JOB Name: {{ job.title }}</h3>
+
+
+
+                <div class="col-md-6">
+                    {% if job.photo %}
+                    <img class="card-image img-fluid" " src=" {{ job.photo.url }}" alt="{{ job.title }}">
+                    {% endif %}
+                </div>
+
+<div class="text-atart">Description: {{job.description}}</div>
+            </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="{% url 'applydata_submit' job.id %}" enctype="multipart/form-data">
+
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Full Name:</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone No.:</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}"
+                                title="Please enter a 10-digit phone number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="experience" class="form-label">Experience:</label>
+                            <select class="form-select" id="experience" name="experience">
+                                <option value="0yr">Internship</option>
+                                <option value="1yr">1 Year</option>
+                                <option value="2yr">2 Years</option>
+                                <option value="3yr">3 Years</option>
+                                <option value="4yr+">More than 4 Years</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resume" class="form-label">Upload Resume:</label>
+                            <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% endblock %}
