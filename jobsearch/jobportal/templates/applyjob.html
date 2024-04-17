@@ -15,8 +15,6 @@
             {% for job in data %}
                 <h3>JOB Name: {{ job.title }}</h3>
 
-
-
                 <div class="col-md-6">
                     {% if job.photo %}
                     <img class="card-image img-fluid" " src=" {{ job.photo.url }}" alt="{{ job.title }}">

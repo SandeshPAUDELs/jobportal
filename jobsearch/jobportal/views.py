@@ -1,4 +1,4 @@
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.contrib.auth.decorators import login_required
@@ -19,13 +19,7 @@ def index(request):
 @login_required
 def addjobs(request):
     if request.method == 'POST':
-        
-
-        ndata = Application.objects.all().order_by('-id')  
-
-
-
-        # Extract form data from the request
+        ndata = Application.objects.all().order_by('-id')
         title = request.POST.get('title')
         description = request.POST.get('description')
         photo = request.FILES.get('photo')
@@ -34,11 +28,12 @@ def addjobs(request):
         # Create a new Job instance and save it to the database
         new_job = Job(title=title, description=description, photo=photo, location=location, salary=salary)
         new_job.save()
-        return render(request, 'index.html', {'jobs': Job.objects.all()})
-    
+        message = "Job is added."
+        return render(request, 'index.html', {'jobs': Job.objects.all(), 'message': message})
     else:
-        ndata = Application.objects.all().order_by('-id')  
-        return render(request, 'adminPages/add_job.html', {'application': ndata})
+        ndata = Application.objects.all().order_by('-id')
+        message = "Error: Can't add jobs."
+        return render(request, 'adminPages/add_job.html', {'application': ndata, 'message': message})
 
 
 #     views for admin to delete the job  only admin can delete the job
@@ -69,7 +64,6 @@ def applydata_submit(request, job_id):
         if Application.objects.filter(job=job, user=user).exists():
             return HttpResponseForbidden("You have already applied for this job.")
         else:
-
             fullname = request.POST.get('fullname')
             email = request.POST.get('email')
             phone = request.POST.get('phone')
@@ -83,12 +77,15 @@ def applydata_submit(request, job_id):
             )
             application.save()
             
-            return render(request,'index.html')
+            message = "Congratulations!, You have applied for the job."
+            jobs = Job.objects.all()
+            return render(request, 'index.html', {'jobs': jobs, 'message': message})
     else:
         pass
 
 #    since user can save tge job so when they want to see which jobs they have seen so far wordk like add to cart in ecommerrse
 
+    
 @login_required
 def savehome_submit(request, job_id):
     if request.user.is_authenticated:
@@ -96,13 +93,16 @@ def savehome_submit(request, job_id):
         job = get_object_or_404(Job, id=job_id)
         
         if not SaveJob.objects.filter(user=user, job=job).exists():
-            save_job = SaveJob(user = request.user,job=job)
-            save_job.save() 
-        return redirect('home') 
+            save_job = SaveJob(user=request.user, job=job)
+            save_job.save()
+            message = 'Job saved successfully.'
+        else:
+            message = 'Job already saved.'
+        
+        saveddata = SaveJob.objects.filter(user=request.user).order_by('-id')
+        return render(request, 'savedjobs.html', {'saveddata': saveddata, 'message': message})
     else:
         return redirect('home')
-    
-
 
 
 
