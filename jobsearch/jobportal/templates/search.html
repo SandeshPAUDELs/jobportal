@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Search {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Search Results for <span class="text-info">"{{request.GET.keyword}}"</span></h3>
+            <hr>
+           
+            <div class="row mt-4">
+                {% for result in results %}
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card mb-4 shadow">
+                        <img src="{{ result.photo.url }}" class="card-img-top" alt="{{ result.title }} Photo">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ result.title }}</h5>
+                            <p class="card-text">
+                                Salary: <strike>Rs. {{ result.salary }}</strike> Negotiable
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex gap-2">
+                                <form method="post" action="{% url 'savehome_submit' result.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                </form>
+                                <form method="post" action="{% url 'jobPortal_home_jobs' result.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Apply</button>
+                                </form>
+                                {% if user.is_superuser %}
+                                <form method="post" action="{% url 'delete_results' result.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div> 
+    
+</div>
+
+{% endblock %}

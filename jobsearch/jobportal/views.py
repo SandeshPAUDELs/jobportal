@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views import View
 from .models import Application, Job, SaveJob
 
 
@@ -12,6 +13,25 @@ from .models import Application, Job, SaveJob
 def index(request):
     jobs = Job.objects.all()
     return render(request, 'index.html', {'jobs': jobs})
+
+
+#     views for the search bar where the user can search the job by the title of the job
+# class Search(View):
+#     def get(self, request):
+#         query = request.GET.get('q')
+#         if query:
+#             jobs = Job.objects.filter(title__icontains=query)
+#         else:
+#             jobs = Job.objects.all()
+#         return render(request, 'index.html', {'jobs': jobs})
+
+def search(request):
+    if request.method == 'GET':
+        keyword = request.GET.get('keyword')
+        results = Job.objects.filter(title__icontains=keyword)
+        return render(request, 'search.html', {'results': results})
+    # else:
+    #     return HttpResponse("Method not allowed", status=405)
 
 
 #     views for admin to add the job 
