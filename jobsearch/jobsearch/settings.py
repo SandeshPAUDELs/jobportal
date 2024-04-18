@@ -86,7 +86,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'loginPage'
 
 STATIC_URL = 'static/'
 STATICfILES_URL =[os.path.join(BASE_DIR, 'static')]
@@ -98,3 +99,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'paudelsandesh181@gmail.com'
+EMAIL_HOST_PASSWORD = 'pqpq rtxg lnji wcid'
+EMAIL_USE_TLS = True  

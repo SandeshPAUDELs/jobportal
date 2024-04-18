@@ -1,51 +1,49 @@
+{% extends 'base.html' %}
 
- {% extends 'base.html' %}
+{% block title %}
+    Home Page - Your Website
+{% endblock %}
 
- {% block title %}
-     Home Page - Your Website
- {% endblock %}
- 
- {% block content %}
- <div class="container">
-     <div class="jumbotron">
-         <h3 class="text-center bg-success text-light">{{ message }}</h3>
-         <h3 class="lead">Find your dream job with ease.</h3>
-     </div>
-   
-     <div class="row mt-4">
-         {% for job in jobs %}
-         <div class="col-lg-4 col-md-6 col-sm-12">
-             <div class="card mb-4 shadow">
-                 <img src="{{ job.photo.url }}" class="card-img-top" alt="{{ job.title }} Photo">
-                 <div class="card-body">
-                     <h5 class="card-title">{{ job.title }}</h5>
-                     <p class="card-text">
-                         Salary: <strike>Rs. {{ job.salary }}</strike> Negotiable
-                     </p>
-                 </div>
-                 <div class="card-footer">
-                     {% if user.is_authenticated %}
-                     <form method="post" action="{% url 'savehome_submit' job.id %}">
-                       {% csrf_token %}
-                       <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                     </form>
-                     <form method="post" action="{% url 'jobPortal_home_jobs' job.id %}">
-                       {% csrf_token %}
-                       <button type="submit" class="btn btn-success btn-sm">Apply</button>
-                     </form>
-                     {% endif %}
-                     {% if user.is_superuser %}
-                     <form method="post" action="{% url 'delete_jobs' job.id %}">
-                       {% csrf_token %}
-                       <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                     </form>
-                     {% endif %}
-                   </div>
-                 </div>
-             </div>
-         </div>
-         {% endfor %}
-     </div>
- </div>
- {% endblock %}
- 
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h3 class="text-center bg-success text-light">{{ message }}</h3>
+        <h3 class="lead">Find your dream job with ease.</h3>
+    </div>
+  
+    <div class="row mt-4">
+        {% for job in jobs %}
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card mb-4 shadow">
+                <img src="{{ job.photo.url }}" class="card-img-top" alt="{{ job.title }} Photo">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text">
+                        Salary: <strike>Rs. {{ job.salary }}</strike> Negotiable
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <form method="post" action="{% url 'savehome_submit' job.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        </form>
+                        <form method="post" action="{% url 'jobPortal_home_jobs' job.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">Apply</button>
+                        </form>
+                        {% if user.is_superuser %}
+                        <form method="post" action="{% url 'delete_jobs' job.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

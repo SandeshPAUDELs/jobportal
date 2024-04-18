@@ -1,6 +1,6 @@
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -8,7 +8,7 @@ from .models import Application, Job, SaveJob
 
 
 #       views for the jobportal app
-@login_required(login_url='loginPage')
+# @login_required(login_url='loginPage')
 def index(request):
     jobs = Job.objects.all()
     return render(request, 'index.html', {'jobs': jobs})
@@ -49,6 +49,9 @@ def jobPortal_home_jobs(request, job_id):
     saveddata = Job.objects.filter(id=job_id)  # Assuming job_id is a field in the Job model
 
     context = {'data': saveddata}  
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please, login to apply for a job.')
+        return redirect('loginPage')  
 
     return render(request, 'applyjob.html', context)
 
@@ -101,9 +104,12 @@ def savehome_submit(request, job_id):
         
         saveddata = SaveJob.objects.filter(user=request.user).order_by('-id')
         return render(request, 'savedjobs.html', {'saveddata': saveddata, 'message': message})
+    
     else:
-        return redirect('home')
-
+        messages.error(request, 'Please login to save jobs.')
+        message = 'Please login to save jobs.'
+        return render(request, 'login.html', {'message': message})
+    
 
 
 #   views where the user saved jobs are displayed

@@ -1,8 +1,11 @@
 
+import random
 from django.contrib import messages
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -53,4 +56,63 @@ def loginPage(request):
     
 def logoutUser(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
+
+
+
+
+otps = {}
+
+# def send_otp(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         otp = random.randint(1000, 9999)
+#         otps[email] = otp
+#         send_mail('OTP Verification', f'Your OTP is {otp}', 'paudelsandesh181@gmail.com', [email], fail_silently=False,)
+#         print(f'OTP sent to {email} is {otp}')
+#         return redirect('verify_otp')
+#     else:
+#         messages.error(request, 'Invalid  Email')
+#         return render(request, 'send_otp.html')
+def send_otp(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        # Check if the email exists in the User model
+        if User.objects.filter(email=email).exists():
+            otp = random.randint(1000, 9999)
+            otps[email] = otp
+            send_mail('OTP Verification', f'Your OTP is {otp}', 'paudelsandesh181@gmail.com', [email], fail_silently=False,)
+            print(f'OTP sent to {email} is {otp}')
+            return redirect('verify_otp')
+        else:
+            # If the email does not exist, add an error message and redirect back to 'send_otp'
+            messages.error(request, 'This email does not exist')
+            return redirect('send_otp')
+    else:
+        return render(request, 'send_otp.html')
+    
+def verify_otp(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        otp = request.POST.get('otp')
+        if otps.get(email) == int(otp):
+            return redirect('forget_password')
+        else:
+            messages.error(request, 'Invalid OTP')
+            return render(request, 'verify_otp.html')  # Render the same page with error message
+    else:
+        return render(request, 'verify_otp.html')
+
+
+def forget_password(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+        messages.success(request, 'Password changed successfully')
+        return redirect('loginPage')
+    else:
+        return render(request, 'forget_password.html')
